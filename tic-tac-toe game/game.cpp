@@ -2,127 +2,242 @@
 #include <iostream>
 #include <ctime>
 
-void drawnBoard(char *space);
-void play(char *space, char player);
-void bot(char *space, char playerbot);
-bool check_winner(char* space, char playerbot , char player);
 
 using namespace std;
 
-int number;
-int number2;
+// define typedef struct of player_1
+typedef struct
+{
+	int choose;
+	char space[9];
+	char select_symbol;
+
+}player_1;
+
+// define typedef struct of player_bot
+typedef struct
+{
+	int choose;
+	char space[9];
+	char select_symbol_bot;
+
+}player_2;
+
+// define typedef struct of Board_system
+typedef struct
+{
+	bool running;
+	char space[9];
+	char winner;
+
+}Board_system;
+
+// Define funtion board to collect a number of space 
+void drawnBoard(char* space);
+
+// Define funtion play game inside funtion together with struct of player_1 point Robin_plyer
+// In this funtion Robin_player can use any valueable in player_1 struct
+//We can say Robin_player Return a value of choose type intiger
+
+void play(player_1* Robin_player, Board_system* drawn);
+
+//Define funtion of borad system for Define a number of index in space
+
+void system_of_board(Board_system* drawn);
+
+// Define player_1 is a datatype of Robin That Robin can use any data in player_1 function
+
+void bot_play(player_2* Robin_bot, Board_system* drawn);
+
+bool check_winner(player_1* Robin_player,player_2* Robin_bot, Board_system* drawn);
+
+player_1 Robin;
+player_2 Bot;
+Board_system board;
+
 
 int main()
 {
-	char space[9] = { ' ', ' ', '  ' , '  ','  ' ,'  ' , '  ', '  ', '  ' };
-	char player = 'x';
-	char playerbot = 'O';
-	bool running = true;
-	drawnBoard(space);
+	//Define a member of Robin name select_symbol that collect type char value = X
+	Robin.select_symbol = 'X';
+	Bot.select_symbol_bot = 'O';
+	board.running = true;
+	
+	system_of_board(&board);
 
-
-	while (running)
+	while (board.running)
 	{
-		play(space,player);
-		drawnBoard(space);
-		if (check_winner(space, playerbot, player))
-		{
-			running = false;
-			break;
-		}
-		bot(space, playerbot);
-		drawnBoard(space);
-		if (check_winner(space, playerbot, player))
-		{
-			running = false;
-			break;
-		}
-
-	}
-	return 0;
-}
-void drawnBoard(char *space)
-{
-	
-	cout << "     |     |     " << "\r\n";
-	cout << "  " << space[0] << "  |  " << space[1] << "  |  " << space[2] << "  |  " << endl;
-	cout << "_____|_____|_____" << endl;
-	cout << "     |     |     " << "\r\n";
-	cout << "  " << space[3] << "  |  " << space[4] << "  |  " << space[5] << "  |  " << endl;
-	cout << "_____|_____|_____" << endl;
-	cout << "     |     |     " << "\r\n";
-	cout << "  " << space[6] << "  |  " << space[7] << "  |  " << space[8] << "  |  " << endl;
-	cout << "     |     |     " << "\r\n";
-
-
-}
-
-void play(char * space, char player)
-{
-	
-	 while ( number > 0 || number < 8 )
-	{
-		cout << "enter number for spot 0-9 = ";
-		cin >> number;
-		number--;
-		if (space[number] == ' ')
-		{
-			space[number] = player;
-			break;
-		}
-	}
-	
-}
-
-void bot(char* space, char playerbot)
-{
-	
-	srand(time(0));
-	while (true)
-	{
-		number2 = rand() % 9;
-		if (space[number2] == ' ')
-		{
-			space[number2] = playerbot;
-			break;
-		}
-	}
-}
-bool check_winner(char* space, char playerbot, char player)
-{
-	if (space[0]!=' ' && space[0] == space[1] && space[1] == space[2])
-	 {
+		drawnBoard(board.space);
+		play(&Robin, &board);
+		drawnBoard(board.space);
 		
-		space[0] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
-	 }
-	else 
-	if (space[0] != ' ' && space[0] == space[3] && space[3] == space[6])
-	{
-		space[0] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
-	}
-	else
-	
-	if (space[1] != ' ' && space[1] == space[4] && space[4] == space[7])
-	{
-		space[1] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
-	}
-	else
-	
-	    if (space[2] != ' ' && space[2] == space[5] && space[5] == space[8])
+		
+		if (check_winner(&Robin, &Bot, &board))
 		{
-			space[2] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
+			board.running = false;
+		
 	    }
-		else
-		if (space[6] != ' ' && space[6] == space[7] && space[7] == space[8])
+		bot_play(&Bot, &board);
+		drawnBoard(board.space);
+		if (check_winner(&Robin, &Bot, &board))
 		{
-			space[6] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
+
+			board.running = false;
+
 		}
-		else
-		if (space[3] != ' ' && space[3] == space[4] && space[4] == space[5])
+	}
+
+
+}
+
+//Define board funtion for print out from teminal show the reasult
+
+void drawnBoard(char* space)
+{
+
+	cout << "     |     |     " << "\n";
+	cout << "  " << space[0] << "  |  " << space[1] << "  |  " << space[2] << "   \n";
+	cout << "_____|_____|_____" << "\n";
+	cout << "     |     |     " << "\n";
+	cout << "  " << space[3] << "  |  " << space[4] << "  |  " << space[5] << "   \n";
+	cout << "_____|_____|_____" << "\n";
+	cout << "     |     |     " << "\n";
+	cout << "  " << space[6] << "  |  " << space[7] << "  |  " << space[8] << "   \n";
+	cout << "     |     |     " << "\n";
+
+
+}
+
+void play(player_1* Robin_player, Board_system* drawn)
+{
+
+
+	bool choice = true;
+
+	while (choice)
+	{
+		cout << "enter number for spot 0-8 = ";
+		cin >> Robin_player->choose;
+
+		if (Robin_player->choose > 8 || Robin_player->choose > 0)
 		{
-			space[3] == player ? cout << "YOU WIN \n" : cout << "You lose\n";
+			Robin_player->choose--;
+			if (drawn->space[Robin_player->choose] == ' ')
+			{
+				drawn->space[Robin_player->choose] = Robin_player->select_symbol;
+				break;
+			}
 		}
-		else
-	
+		else 
+		{
+			cout << "Error choice choose a new one ";
+		}
+			
+			
+		
+	}
+}
+
+void system_of_board(Board_system* drawn)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		drawn->space[i] = ' ';
+	}
+}
+
+void bot_play(player_2* Robin_bot, Board_system* drawn)
+{
+	bool bot_choice = true;
+
+	srand(time(0));
+
+	while (bot_choice)
+	{
+		Robin_bot->choose = rand() % 9;
+		if (drawn->space[Robin_bot->choose] == ' ')
+		{
+			drawn->space[Robin_bot->choose] = Robin_bot->select_symbol_bot;
+			break;
+		}
+	}
+}
+
+
+bool check_winner(player_1* Robin_player, player_2* Robin_bot, Board_system* drawn)
+{
+
+	if (drawn->space[0] != ' ' && drawn->space[0] == drawn->space[1] && drawn->space[1] == drawn->space[2])
+
+	{
+
+		drawn->space[0] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[0] != ' ' && drawn->space[0] == drawn->space[3] && drawn->space[3] == drawn->space[6])
+
+	{
+
+		drawn->space[0] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[1] != ' ' && drawn->space[1] == drawn->space[4] && drawn->space[4] == drawn->space[7])
+
+	{
+
+		drawn->space[1] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[2] != ' ' && drawn->space[2] == drawn->space[5] && drawn->space[5] == drawn->space[8])
+
+	{
+
+		drawn->space[2] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[6] != ' ' && drawn->space[6] == drawn->space[7] && drawn->space[7] == drawn->space[8])
+
+	{
+
+		drawn->space[6] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[3] != ' ' && drawn->space[3] == drawn->space[4] && drawn->space[4] == drawn->space[5])
+
+	{
+
+		drawn->space[3] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[0] != ' ' && drawn->space[0] == drawn->space[4] && drawn->space[4] == drawn->space[8])
+
+	{
+
+			drawn->space[0] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
+	if (drawn->space[2] != ' ' && drawn->space[2] == drawn->space[4] && drawn->space[4] == drawn->space[6])
+
+	{
+
+		drawn->space[2] == Robin_player->select_symbol ? cout << "YOU WIN \n" : cout << "YOU  LOSE\n";
+
+	}
+	else
+
 	return(0);
 }
